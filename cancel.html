@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartCharts — Success Recovery</title>
+  <style>
+/* SmartCharts – Success Recovery
+   Brand-styled, single stylesheet. Dark trading-desk aesthetic with a green
+   accent to echo the SmartCharts profile site. */
+
+:root {
+  --bg:        #0a0f1c;
+  --bg-2:      #0f1626;
+  --panel:     #131c30;
+  --panel-2:   #182238;
+  --border:    #223049;
+  --text:      #eaf0fa;
+  --muted:     #96a4bd;
+  --accent:    #16d191;   /* SmartCharts green */
+  --accent-2:  #0fae78;
+  --accent-ink:#04140d;
+  --danger:    #8a97ad;
+  --radius:    16px;
+  --shadow:    0 20px 60px rgba(0,0,0,.45);
+  --maxw:      620px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(22,209,145,.10), transparent 55%),
+    radial-gradient(900px 500px at 0% 110%, rgba(22,209,145,.06), transparent 50%),
+    var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 20px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ------------------------------ brand bar ----------------------------- */
+.brand-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 4px 22px;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark {
+  color: var(--accent);
+  font-size: 20px;
+  filter: drop-shadow(0 0 10px rgba(22,209,145,.5));
+}
+.brand-name { font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 15px; }
+.brand-tag { color: var(--muted); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+
+/* -------------------------------- stage ------------------------------- */
+.stage { flex: 1; display: flex; align-items: flex-start; }
+
+.card {
+  width: 100%;
+  background: linear-gradient(180deg, var(--panel), var(--bg-2));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px 30px;
+}
+
+/* fade/slide-in on mount */
+.card { transition: opacity .32s ease, transform .32s ease; }
+.card.enter { opacity: 0; transform: translateY(14px); }
+
+.eyebrow {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 26px;
+  line-height: 1.25;
+  margin: 0 0 16px;
+  letter-spacing: -.01em;
+}
+
+.copy { margin-bottom: 22px; }
+.lede { color: var(--muted); line-height: 1.6; margin: 0 0 12px; font-size: 15.5px; }
+.lede.subtle { font-size: 14px; }
+.prompt { font-weight: 700; font-size: 16.5px; margin: 0 0 18px; }
+.step-hint {
+  color: var(--accent);
+  font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; font-weight: 600;
+  margin: 0 0 12px;
+}
+
+/* ------------------------------- options ------------------------------ */
+.options { display: grid; gap: 12px; }
+
+.option {
+  appearance: none;
+  text-align: left;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .12s ease, border-color .16s ease, background .16s ease;
+  position: relative;
+}
+.option::after {
+  content: "→";
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); opacity: 0; transition: opacity .16s ease, transform .16s ease;
+}
+.option:hover {
+  border-color: var(--accent);
+  background: #1a2740;
+  transform: translateY(-1px);
+}
+.option:hover::after { opacity: 1; transform: translate(4px, -50%); }
+.option.cancel { color: var(--danger); font-weight: 500; }
+.option.cancel:hover { border-color: #33415b; background: var(--panel-2); }
+
+.final-options { margin-top: 4px; }
+
+/* -------------------------------- offer ------------------------------- */
+.offer {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  padding: 20px 20px;
+  margin-bottom: 22px;
+}
+.offer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.offer-headline { font-size: 19px; margin: 0; }
+.offer-desc { color: var(--muted); line-height: 1.55; margin: 0; font-size: 15px; }
+.badge {
+  background: rgba(22,209,145,.14);
+  color: var(--accent);
+  border: 1px solid rgba(22,209,145,.35);
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px;
+}
+
+/* ------------------------------- actions ------------------------------ */
+.actions { display: grid; gap: 10px; }
+.actions.center { justify-items: center; }
+
+.btn {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 15px 18px;
+  font-size: 15.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .12s ease, filter .16s ease, background .16s ease, border-color .16s ease;
+}
+.btn.primary {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color: var(--accent-ink);
+  box-shadow: 0 10px 26px rgba(22,209,145,.28);
+}
+.btn.primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+.btn.ghost {
+  background: transparent;
+  color: var(--muted);
+  border-color: var(--border);
+}
+.btn.ghost:hover { color: var(--text); border-color: #33415b; }
+
+/* -------------------------------- forms ------------------------------- */
+.form { display: grid; gap: 14px; margin-bottom: 22px; }
+.field { display: grid; gap: 6px; }
+.field-label { font-size: 13.5px; color: var(--muted); font-weight: 600; }
+.input {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(22,209,145,.15);
+}
+
+/* -------------------------------- back -------------------------------- */
+.back {
+  appearance: none; background: none; border: none;
+  color: var(--muted); cursor: pointer;
+  font-size: 13px; padding: 0; margin: 0 0 14px;
+  transition: color .16s ease;
+}
+.back:hover { color: var(--text); }
+
+/* ------------------------------ outcomes ------------------------------ */
+.outcome { text-align: center; }
+.outcome .copy { margin-top: 4px; }
+.outcome-icon {
+  width: 64px; height: 64px; margin: 4px auto 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+}
+.outcome-icon.good {
+  background: rgba(22,209,145,.14);
+  color: var(--accent);
+  border: 1px solid rgba(22,209,145,.4);
+}
+.outcome-icon.neutral {
+  background: rgba(150,164,189,.12);
+  color: var(--muted);
+  border: 1px solid #33415b;
+}
+.outcome-detail {
+  display: inline-block;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-weight: 700;
+  margin: 0 0 18px;
+}
+
+/* ------------------------------- mission ------------------------------ */
+.mission {
+  margin-top: 26px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.mission p {
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+/* ------------------------------ responsive ---------------------------- */
+@media (max-width: 480px) {
+  .card { padding: 24px 20px; }
+  .title { font-size: 22px; }
+}
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="brand-bar">
+      <div class="brand">
+        <span class="brand-mark">◈</span>
+        <span class="brand-name">SmartCharts</span>
+      </div>
+      <div class="brand-tag">Success Recovery</div>
+    </header>
+    <main id="stage" class="stage" aria-live="polite"></main>
+    <footer class="mission"><p id="mission"></p></footer>
+  </div>
+  <script>
+window.SC_FLOW = {
+    "brand": {
+        "name": "SmartCharts",
+        "mission": "We're committed to building successful traders. We don't want you to lose the investment you've already made in your education. Let's work together to get you back on track."
+    },
+    "start": "step1",
+    "screens": {
+        "step1": {
+            "kind": "reason",
+            "heading": "Before you leave…",
+            "body": [
+                "We genuinely care about your trading journey.",
+                "Most clients joined SmartCharts because they wanted more financial freedom, more confidence and another source of income.",
+                "We know that every trader's journey has ups and downs, and we're committed to helping you succeed."
+            ],
+            "prompt": "Can you tell us what has changed so we can recommend the best solution?",
+            "options": [
+                {
+                    "id": "money",
+                    "label": "I'm not making money",
+                    "next": "branch_money"
+                },
+                {
+                    "id": "confidence",
+                    "label": "I don't feel confident trading",
+                    "next": "branch_confidence"
+                },
+                {
+                    "id": "usage",
+                    "label": "I'm not using SmartCharts enough",
+                    "next": "branch_usage"
+                },
+                {
+                    "id": "afford",
+                    "label": "I can't currently afford it",
+                    "next": "branch_afford"
+                },
+                {
+                    "id": "competitor",
+                    "label": "I've found another solution",
+                    "next": "branch_competitor"
+                },
+                {
+                    "id": "else",
+                    "label": "Something else",
+                    "next": "branch_goal"
+                }
+            ]
+        },
+        "branch_money": {
+            "kind": "offers",
+            "reason": "money",
+            "heading": "Let’s turn things around",
+            "body": [
+                "Thank you for being honest.",
+                "The reality is that many successful traders go through periods where results aren't what they hoped.",
+                "The answer usually isn't to stop learning — it's to receive the right support.",
+                "We'd love the opportunity to help you turn things around."
+            ],
+            "offers": [
+                {
+                    "id": "coaching",
+                    "badge": "Recommended",
+                    "headline": "3 free coaching sessions",
+                    "desc": "Work one-to-one with an experienced trader to review your approach and rebuild momentum."
+                },
+                {
+                    "id": "prop",
+                    "headline": "A funded Prop Account",
+                    "desc": "We'll fund you with a £/$5,000 Prop Account and you keep 80% of the profits — so you're not risking your own money."
+                },
+                {
+                    "id": "advanced",
+                    "headline": "Advanced Strategy Course",
+                    "desc": "Unlock additional education to sharpen your edge and find consistency."
+                },
+                {
+                    "id": "reduce",
+                    "headline": "Reduce your subscription",
+                    "desc": "A lower monthly rate so you keep full access while you get back on track."
+                }
+            ],
+            "onDeclineAll": "final"
+        },
+        "branch_confidence": {
+            "kind": "offers",
+            "reason": "confidence",
+            "heading": "Let’s build your confidence",
+            "body": [
+                "Confidence doesn't come from watching more videos.",
+                "Confidence comes from making good trading decisions repeatedly, with experienced traders supporting you.",
+                "We'd love to help you build that confidence."
+            ],
+            "offers": [
+                {
+                    "id": "coaching",
+                    "badge": "Recommended",
+                    "headline": "3 free coaching sessions",
+                    "desc": "Guided sessions with an experienced trader to build real decision-making confidence."
+                },
+                {
+                    "id": "review",
+                    "headline": "Strategy review",
+                    "desc": "A specialist reviews your current strategy and helps you refine it."
+                },
+                {
+                    "id": "advanced",
+                    "headline": "Advanced course",
+                    "desc": "Deepen your knowledge with our advanced training."
+                },
+                {
+                    "id": "live",
+                    "headline": "Live trading sessions",
+                    "desc": "Trade alongside our team in real time and learn by doing."
+                }
+            ],
+            "onDeclineAll": "final"
+        },
+        "branch_usage": {
+            "kind": "offers",
+            "reason": "usage",
+            "heading": "Life gets busy",
+            "body": [
+                "Many of our most successful traders have had periods where they stepped away before coming back stronger.",
+                "Let's help you build a routine that fits around your life."
+            ],
+            "offers": [
+                {
+                    "id": "coaching",
+                    "badge": "Recommended",
+                    "headline": "Coaching",
+                    "desc": "One-to-one support to get you back into a rhythm."
+                },
+                {
+                    "id": "accountability",
+                    "headline": "Accountability programme",
+                    "desc": "Regular check-ins to keep you consistent and on track."
+                },
+                {
+                    "id": "plan",
+                    "headline": "Weekly trading plan",
+                    "desc": "A simple structured plan that fits around a busy life."
+                },
+                {
+                    "id": "reduce",
+                    "headline": "Reduced subscription if needed",
+                    "desc": "Keep your access at a lower rate while things are busy."
+                }
+            ],
+            "onDeclineAll": "final"
+        },
+        "branch_afford": {
+            "kind": "offers",
+            "reason": "afford",
+            "heading": "Let’s keep you moving forward",
+            "body": [
+                "We completely understand that finances can become tight.",
+                "Rather than losing access to all the education and tools you've already invested in, we'd love to find a solution that keeps your trading journey moving forward."
+            ],
+            "offers": [
+                {
+                    "id": "reduce50",
+                    "badge": "Recommended",
+                    "headline": "50% subscription reduction",
+                    "desc": "Halve your monthly payment and keep everything you already have."
+                },
+                {
+                    "id": "pause",
+                    "headline": "Pause your payments",
+                    "desc": "Take a break from payments and pick up exactly where you left off."
+                },
+                {
+                    "id": "prop",
+                    "headline": "Funded Prop Account",
+                    "desc": "Trade a £/$5,000 funded account and keep 80% of the profits — no cost to you."
+                },
+                {
+                    "id": "callback",
+                    "headline": "Arrange a callback",
+                    "outcome": "callback",
+                    "desc": "Speak with our team to find an arrangement that works for your budget."
+                }
+            ],
+            "onDeclineAll": "final"
+        },
+        "branch_competitor": {
+            "kind": "capture",
+            "reason": "competitor",
+            "heading": "We’d love to understand",
+            "body": [
+                "We'd genuinely appreciate understanding what attracted you elsewhere.",
+                "If there is something important we're missing, we'd love the opportunity to improve."
+            ],
+            "fields": [
+                {
+                    "id": "competitor",
+                    "label": "Which solution are you moving to?",
+                    "type": "text"
+                },
+                {
+                    "id": "features",
+                    "label": "What features attracted you?",
+                    "type": "text"
+                },
+                {
+                    "id": "price",
+                    "label": "How did the price compare?",
+                    "type": "text"
+                },
+                {
+                    "id": "support",
+                    "label": "How was their support?",
+                    "type": "text"
+                },
+                {
+                    "id": "education",
+                    "label": "How did their education compare?",
+                    "type": "text"
+                }
+            ],
+            "submitLabel": "Request a retention specialist callback",
+            "outcome": "callback",
+            "onDeclineAll": "final"
+        },
+        "branch_goal": {
+            "kind": "goal",
+            "reason": "else",
+            "heading": "Can we ask one question?",
+            "body": [
+                "When you first joined SmartCharts, what was your goal?"
+            ],
+            "goalOptions": [
+                {
+                    "id": "income",
+                    "label": "More income"
+                },
+                {
+                    "id": "freedom",
+                    "label": "Financial freedom"
+                },
+                {
+                    "id": "replace",
+                    "label": "Replace my job"
+                },
+                {
+                    "id": "wealth",
+                    "label": "Build long-term wealth"
+                },
+                {
+                    "id": "skill",
+                    "label": "Learn a valuable skill"
+                }
+            ],
+            "follow": {
+                "question": "Has that goal changed, or have you simply lost confidence in achieving it?",
+                "options": [
+                    {
+                        "id": "changed",
+                        "label": "My goal has changed"
+                    },
+                    {
+                        "id": "discouraged",
+                        "label": "I've lost confidence in achieving it"
+                    }
+                ]
+            },
+            "message": [
+                "If your goal is still the same, we'd love the opportunity to help you achieve it.",
+                "You've already invested significantly in your education. We don't want to see that investment go to waste.",
+                "Let us help you get back on track."
+            ],
+            "offers": [
+                {
+                    "id": "coaching",
+                    "badge": "Recommended",
+                    "headline": "Coaching",
+                    "desc": "One-to-one support to rebuild your momentum."
+                },
+                {
+                    "id": "prop",
+                    "headline": "Funded Prop Account",
+                    "desc": "Trade a £/$5,000 funded account and keep 80% of the profits."
+                },
+                {
+                    "id": "advanced",
+                    "headline": "Advanced Training",
+                    "desc": "Unlock our most advanced education."
+                },
+                {
+                    "id": "community",
+                    "headline": "Join the community",
+                    "desc": "Surround yourself with traders on the same journey."
+                },
+                {
+                    "id": "callback",
+                    "headline": "Arrange a callback",
+                    "outcome": "callback",
+                    "desc": "Talk it through with a member of our team."
+                }
+            ],
+            "onDeclineAll": "final"
+        },
+        "final": {
+            "kind": "final",
+            "heading": "We’d love one final opportunity",
+            "body": [
+                "Before you go…",
+                "We genuinely believe you can become a successful trader. Thousands of our clients have experienced periods of frustration before finding consistency.",
+                "Your original goal — to create more income and more financial freedom — is still achievable, and we’d love to help you get there."
+            ],
+            "prompt": "Before cancelling, please choose one final option:",
+            "options": [
+                {
+                    "id": "coaching",
+                    "label": "Give me 3 free coaching sessions",
+                    "type": "accept",
+                    "outcome": "offer"
+                },
+                {
+                    "id": "prop",
+                    "label": "Give me a funded Prop Account",
+                    "type": "accept",
+                    "outcome": "offer"
+                },
+                {
+                    "id": "advanced",
+                    "label": "Unlock advanced training",
+                    "type": "accept",
+                    "outcome": "offer"
+                },
+                {
+                    "id": "coach",
+                    "label": "Speak to a trading coach",
+                    "type": "accept",
+                    "outcome": "callback"
+                },
+                {
+                    "id": "reduce",
+                    "label": "Reduce my subscription",
+                    "type": "accept",
+                    "outcome": "offer"
+                },
+                {
+                    "id": "cancel",
+                    "label": "I still wish to cancel",
+                    "type": "cancel",
+                    "outcome": "cancelled"
+                }
+            ]
+        }
+    }
+};
+
+  </script>
+  <script>
+    document.getElementById('mission').textContent =
+      (window.SC_FLOW && window.SC_FLOW.brand && window.SC_FLOW.brand.mission) || '';
+  </script>
+  <script>
+/**
+ * SmartCharts – Success Recovery
+ * Data-driven flow engine. Reads window.SC_FLOW (from flow.js) and renders
+ * each screen of the retention decision tree into #stage.
+ */
+(function () {
+  'use strict';
+
+  var FLOW = window.SC_FLOW;
+  var SESSION = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : 'sess-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+  var RECORD_URL = '/api/record';
+  var stage = document.getElementById('stage');
+
+  // Journey context, sent with every logged outcome.
+  var ctx = { reason: null, branch: null, goal: null, follow: null, capture: null };
+
+  /* ------------------------------- helpers ------------------------------ */
+
+  function el(tag, opts, kids) {
+    var node = document.createElement(tag);
+    opts = opts || {};
+    Object.keys(opts).forEach(function (k) {
+      if (k === 'class') node.className = opts[k];
+      else if (k === 'html') node.innerHTML = opts[k];
+      else if (k === 'text') node.textContent = opts[k];
+      else if (k.slice(0, 2) === 'on') node.addEventListener(k.slice(2).toLowerCase(), opts[k]);
+      else node.setAttribute(k, opts[k]);
+    });
+    (kids || []).forEach(function (c) { if (c) node.appendChild(c); });
+    return node;
+  }
+
+  function paragraphs(list, cls) {
+    return (list || []).map(function (t) { return el('p', { class: cls || 'lede', text: t }); });
+  }
+
+  function mount(card) {
+    stage.innerHTML = '';
+    card.classList.add('enter');
+    stage.appendChild(card);
+    // trigger transition on next frame
+    requestAnimationFrame(function () { card.classList.remove('enter'); });
+    stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function record(outcome, detail) {
+    var payload = {
+      session: SESSION,
+      reason: ctx.reason,
+      branch: ctx.branch,
+      outcome: outcome,
+      detail: detail || null,
+      goal: ctx.goal,
+      capture: ctx.capture
+    };
+    return fetch(RECORD_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(function () { /* prototype: ignore network errors */ });
+  }
+
+  function backLink(target) {
+    return el('button', {
+      class: 'back', type: 'button', text: '‹ Back',
+      onClick: function () { render(target || FLOW.start); }
+    });
+  }
+
+  /* ------------------------------- screens ------------------------------ */
+
+  function render(id) {
+    var s = FLOW.screens[id];
+    if (!s) return;
+    switch (s.kind) {
+      case 'reason':  return renderReason(s);
+      case 'offers':  return renderOffers(s, id);
+      case 'goal':    return renderGoal(s, id);
+      case 'capture': return renderCapture(s, id);
+      case 'final':   return renderFinal(s);
+    }
+  }
+
+  // Step 1 — pick what has changed.
+  function renderReason(s) {
+    var opts = el('div', { class: 'options' }, s.options.map(function (o) {
+      return el('button', {
+        class: 'option', type: 'button', text: o.label,
+        onClick: function () {
+          ctx.reason = o.id;
+          ctx.branch = o.next;
+          render(o.next);
+        }
+      });
+    }));
+
+    mount(el('section', { class: 'card' }, [
+      el('h1', { class: 'title', text: s.heading }),
+      el('div', { class: 'copy' }, paragraphs(s.body)),
+      el('p', { class: 'prompt', text: s.prompt }),
+      opts
+    ]));
+  }
+
+  // A branch: ordered offer hierarchy shown one at a time.
+  function renderOffers(s, id, offerList, intro, startIndex) {
+    var offers = offerList || s.offers;
+    var i = startIndex || 0;
+
+    function show(idx) {
+      var offer = offers[idx];
+      var last = idx === offers.length - 1;
+
+      var card = el('section', { class: 'card' }, [
+        backLink(FLOW.start),
+        el('h1', { class: 'title', text: s.heading }),
+        el('div', { class: 'copy' }, paragraphs(intro || s.body)),
+        el('p', { class: 'step-hint', text: 'A suggestion for you (' + (idx + 1) + ' of ' + offers.length + ')' }),
+        offerCard(offer),
+        el('div', { class: 'actions' }, [
+          el('button', {
+            class: 'btn primary', type: 'button', text: acceptLabel(offer),
+            onClick: function () { accept(offer); }
+          }),
+          el('button', {
+            class: 'btn ghost', type: 'button',
+            text: last ? 'No thanks — continue to cancel' : 'Not for me — show another option',
+            onClick: function () {
+              if (last) render(s.onDeclineAll);
+              else show(idx + 1);
+            }
+          })
+        ])
+      ]);
+      mount(card);
+    }
+
+    show(i);
+  }
+
+  function offerCard(offer) {
+    var head = [el('h2', { class: 'offer-headline', text: offer.headline })];
+    if (offer.badge) head.unshift(el('span', { class: 'badge', text: offer.badge }));
+    return el('div', { class: 'offer' }, [
+      el('div', { class: 'offer-head' }, head),
+      el('p', { class: 'offer-desc', text: offer.desc })
+    ]);
+  }
+
+  function acceptLabel(offer) {
+    return offer.outcome === 'callback' ? 'Yes, arrange this' : "Yes, I'd like this";
+  }
+
+  function accept(offer) {
+    var outcome = offer.outcome === 'callback' ? 'callback' : 'offer';
+    record(outcome, offer.headline);
+    renderOutcome(outcome, offer.headline);
+  }
+
+  // Branch 6 — rediscover the goal, then reflect, then offer help.
+  function renderGoal(s, id) {
+    // Step A: original goal.
+    var goalBtns = el('div', { class: 'options' }, s.goalOptions.map(function (o) {
+      return el('button', {
+        class: 'option', type: 'button', text: o.label,
+        onClick: function () { ctx.goal = o.id; stepB(); }
+      });
+    }));
+
+    mount(el('section', { class: 'card' }, [
+      backLink(FLOW.start),
+      el('h1', { class: 'title', text: s.heading }),
+      el('div', { class: 'copy' }, paragraphs(s.body)),
+      goalBtns
+    ]));
+
+    // Step B: has the goal changed, or lost confidence?
+    function stepB() {
+      var f = s.follow;
+      var btns = el('div', { class: 'options' }, f.options.map(function (o) {
+        return el('button', {
+          class: 'option', type: 'button', text: o.label,
+          onClick: function () { ctx.follow = o.id; stepC(); }
+        });
+      }));
+      mount(el('section', { class: 'card' }, [
+        el('h1', { class: 'title', text: f.question }),
+        el('p', { class: 'lede subtle', text: 'Most people haven’t changed their dream — they’ve simply become discouraged.' }),
+        btns
+      ]));
+    }
+
+    // Step C: message + offer hierarchy (reuses the offers renderer).
+    function stepC() {
+      renderOffers(s, id, s.offers, s.message, 0);
+    }
+  }
+
+  // Branch 5 — capture why they are leaving, then book a callback.
+  function renderCapture(s, id) {
+    var inputs = {};
+    var fields = el('div', { class: 'form' }, s.fields.map(function (f) {
+      var input = el('input', { class: 'input', type: f.type || 'text', id: 'f_' + f.id, placeholder: ' ' });
+      inputs[f.id] = input;
+      return el('label', { class: 'field' }, [
+        el('span', { class: 'field-label', text: f.label }),
+        input
+      ]);
+    }));
+
+    var card = el('section', { class: 'card' }, [
+      backLink(FLOW.start),
+      el('h1', { class: 'title', text: s.heading }),
+      el('div', { class: 'copy' }, paragraphs(s.body)),
+      fields,
+      el('div', { class: 'actions' }, [
+        el('button', {
+          class: 'btn primary', type: 'button', text: s.submitLabel,
+          onClick: function () {
+            var captured = {};
+            Object.keys(inputs).forEach(function (k) { captured[k] = inputs[k].value.trim(); });
+            ctx.capture = captured;
+            record('callback', 'Retention specialist callback');
+            renderOutcome('callback', 'Retention specialist callback');
+          }
+        }),
+        el('button', {
+          class: 'btn ghost', type: 'button', text: 'No thanks — continue to cancel',
+          onClick: function () { render(s.onDeclineAll); }
+        })
+      ])
+    ]);
+    mount(card);
+  }
+
+  // Final last-chance page before ANY cancellation completes.
+  function renderFinal(s) {
+    var opts = el('div', { class: 'options final-options' }, s.options.map(function (o) {
+      return el('button', {
+        class: 'option' + (o.type === 'cancel' ? ' cancel' : ''), type: 'button', text: o.label,
+        onClick: function () {
+          if (o.type === 'cancel') { record('cancelled', 'Final page'); renderOutcome('cancelled'); }
+          else { record(o.outcome, o.label); renderOutcome(o.outcome, o.label); }
+        }
+      });
+    }));
+
+    mount(el('section', { class: 'card' }, [
+      el('span', { class: 'eyebrow', text: 'One final opportunity' }),
+      el('h1', { class: 'title', text: s.heading }),
+      el('div', { class: 'copy' }, paragraphs(s.body)),
+      el('p', { class: 'prompt', text: s.prompt }),
+      opts
+    ]));
+  }
+
+  /* ------------------------------ outcomes ------------------------------ */
+
+  function renderOutcome(type, detail) {
+    var config = {
+      offer: {
+        icon: '✓',
+        cls: 'good',
+        title: "You're all set",
+        body: ['Great choice — we’ve noted this and a member of the team will set it up for you.',
+               'This is exactly the kind of support that gets traders back on track.']
+      },
+      callback: {
+        icon: '☎',
+        cls: 'good',
+        title: 'We’ll be in touch',
+        body: ['Thank you — a retention specialist will call you back shortly.',
+               'We’re looking forward to helping you keep moving forward.']
+      },
+      cancelled: {
+        icon: '◔',
+        cls: 'neutral',
+        title: 'Your cancellation will be processed',
+        body: ['We’re sorry to see you go. Your access will remain active until the end of your current period.',
+               'The door is always open — whenever you’re ready to pick your goal back up, we’ll be here.']
+      }
+    }[type];
+
+    var kids = [
+      el('div', { class: 'outcome-icon ' + config.cls, text: config.icon }),
+      el('h1', { class: 'title', text: config.title })
+    ];
+    if (detail && type !== 'cancelled') {
+      kids.push(el('p', { class: 'outcome-detail', text: detail }));
+    }
+    kids.push(el('div', { class: 'copy' }, paragraphs(config.body)));
+    kids.push(el('div', { class: 'actions center' }, [
+      el('button', {
+        class: 'btn ghost', type: 'button', text: 'Start over',
+        onClick: function () { ctx = { reason: null, branch: null, goal: null, follow: null, capture: null }; render(FLOW.start); }
+      })
+    ]));
+
+    mount(el('section', { class: 'card outcome' }, kids));
+  }
+
+  /* -------------------------------- boot -------------------------------- */
+  render(FLOW.start);
+})();
+
+  </script>
+</body>
+</html>
